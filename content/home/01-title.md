@@ -136,7 +136,7 @@ ps aux
 {{% /note %}}
 
 ---
-## Run a background nginx container
+## Run a background container: `nginx`
 
 ```bash
 # Visit the IP address of your docker host to see whether nginx is running
@@ -153,7 +153,7 @@ docker logs -f <nginx-container-name>
 docker exec -it <nginx-container-name> sh
 
 # Navigate to the location where nginx default page is stored
-cd /var/share/nginx/html
+cd /usr/share/nginx/html
 ```
 
 {{% note %}}
@@ -182,9 +182,9 @@ cd /var/share/nginx/html
 ### Override the nginx default page with bind mount
 
 ```bash
-curl -o /tmp/index.html https://pastebin.com/raw/LxcFJW01
+curl -o /tmp/index.html https://pastebin.com/raw/k8DyhGqf
 
-docker run --rm -d -p 80:80 -v /tmp/index.html:/var/share/nginx/html/index.html nginx:alpine
+docker run --rm -p 80:80 -v /tmp/index.html:/usr/share/nginx/html/index.html nginx:alpine
 
 # Refresh the page
 ```
@@ -221,19 +221,19 @@ docker images
 ```dockerfile
 FROM nginx:alpine
 
-ADD /tmp/index.html /var/share/nginx/html/
+ADD /tmp/index.html /usr/share/nginx/html/
 ```
 
 Commands
 ```bash
-curl -o Dockerfile https://pastebin.com/raw/TfjzNjbY
+curl -o Dockerfile https://pastebin.com/raw/WDznhx8n
 
 docker build -t hello-nginx .
 
 # See the image you built listed
 docker images
 
-docker run --rm -d -p 80:80 hello-nginx
+docker run --rm -p 80:80 hello-nginx
 ```
 
 {{% note %}}
@@ -365,6 +365,18 @@ docker-compose -f mysql-compose.yml down
 
 ---
 
+## Let's run a Laravel Application inside Docker
+
+```bash
+git clone https://github.com/deltasquare4/laravel-hello-world
+
+docker-compose up -d
+
+docker stats
+```
+
+---
+
 ## Advantages
 
 * No more "works on my machine". Because of Immutable Code + Environment, literally the same thing runs in all the environments.
@@ -382,20 +394,23 @@ docker-compose -f mysql-compose.yml down
 
 ---
 
-## Let's run a Laravel Application inside Docker
+## Drawbacks
 
-```bash
-git clone https://github.com/deltasquare4/laravel-hello-world
+* Docker daemon runs as root. Can be a potential security risk.
+* All containers run as child processes of Docker daemon. Bringing down the daemon will bring down all the containers.
+* Persistent data is complicated. Servers cannot be treated as throwaway completely in case of stateful load.
 
-docker-compose up -d
+{{% note %}}
+6m
 
-docker stats
-```
+{{% /note %}}
 
 ---
 ### Thanks!
 
 Slides: [https://github.com/deltasquare4/docker-from-scratch-workshop](https://github.com/deltasquare4/docker-from-scratch-workshop)
+Laravel App Repo: [https://github.com/deltasquare4/laravel-hello-world](https://github.com/deltasquare4/laravel-hello-world)
+Base Image Repo: [https://github.com/deltasquare4/docker-php-base](https://github.com/deltasquare4/docker-php-base)
 
 Rakshit Menpara ([@deltasquare4](https://twitter.com/deltasquare4))
 
