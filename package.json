@@ -1,6 +1,6 @@
 {
   "scripts": {
     "install": "curl -L -O https://github.com/gohugoio/hugo/releases/download/v0.56.1/hugo_0.56.1_Linux-64bit.tar.gz && tar -xzf hugo_0.56.1_Linux-64bit.tar.gz",
-    "build": "./hugo"
+    "build": "git submodule update --init && ./hugo"
   }
 }
