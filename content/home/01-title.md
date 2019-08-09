@@ -3,14 +3,14 @@ title = "Docker From Scratch"
 outputs = ["Reveal"]
 +++
 
+{{< slide timing="180" >}}
+
 # Docker From Scratch
 
 Hands-on Workshop
 
 {{% note %}}
 <pre>
-1m
-
 * Who am I?
 * How many of you have used
   Docker?
@@ -23,6 +23,9 @@ Hands-on Workshop
 {{% /note %}}
 
 ---
+
+{{< slide timing="120" >}}
+
 ## What is Docker?
 
 * A cloud infrastructure company (formerly dotCloud) that created Docker as an internal tool
@@ -31,23 +34,29 @@ Hands-on Workshop
 * Container Image Packaging Format, now evolved into OCI Image
 
 {{% note %}}
-3m
+5m
 
 {{% /note %}}
 
 ---
+
+{{< slide timing="300" >}}
+
 ## Containers vs Virtual Machines
 
-![Custom Autoscaler](https://i0.wp.com/blog.docker.com/wp-content/uploads/Blog.-Are-containers-..VM-Image-1.png)
+![Containers and VMs](https://i0.wp.com/blog.docker.com/wp-content/uploads/Blog.-Are-containers-..VM-Image-1.png)
 
 (Source: [Docker Blog: Are Containers Replacing Virtual Machines? by Jenny Fong](https://blog.docker.com/2018/08/containers-replacing-virtual-machines/))
 
 {{% note %}}
-4m
+10m
 
 {{% /note %}}
 
 ---
+
+{{< slide timing="300" >}}
+
 ## History of Containers
 
 * **1979**: Development of `chroot` in Unix V7
@@ -59,22 +68,28 @@ Hands-on Workshop
 * **2017 Onwards**: Kubernetes emerged as a victor in Container Orchestrator Wars™. Seeds of alternative ecosystem were sewn with development of alternative tools like CRI-O, and Podman. Evolution is still ongoing.
 
 {{% note %}}
-5m
-
-
+<pre>
+* Honorary mentions: BSD Jails, SmartOS
+</pre>
 {{% /note %}}
 
 ---
+
+{{< slide timing="300" >}}
+
 ## Enough Talk. Let's Get Our Hands Dirty!
 
 * Visit <app-link>, and authenticate yourself through the gmail account you used to register for the workshop
 
 {{% note %}}
-6m
+20m
 
 {{% /note %}}
 
 ---
+
+{{< slide timing="300" >}}
+
 ## Run a task
 
 ```bash
@@ -91,8 +106,13 @@ docker rm <container-name>
 ```
 
 {{% note %}}
-6m
-
+<pre>
+* docker run
+* docker pull
+* docker ps
+* docker rename
+* docker rm
+</pre>
 {{% /note %}}
 
 ---
@@ -134,10 +154,6 @@ docker exec -it <nginx-container-name> sh
 
 # Navigate to the location where nginx default page is stored
 cd /var/share/nginx/html
-
-# Clean up
-docker stop <nginx-container-name>
-docker rm <nginx-container-name>
 ```
 
 {{% note %}}
@@ -145,6 +161,10 @@ docker rm <nginx-container-name>
 
 * Explain host port mapping
 * See nginx processes running inside the container
+* docker logs
+* docker start
+* docker stop
+* docker rm -f
 
 {{% /note %}}
 
@@ -254,6 +274,7 @@ CMD ["yarn", "docker:start"]
 
 ## Image Building Best Practices
 
+* One ~~process~~ service per container.
 * Keep images stateless.
 * Build immutable images for each software release. Don't mount code as volume.
 * Keep images as small in size as possible. Add only stuff that you need.
@@ -265,6 +286,7 @@ CMD ["yarn", "docker:start"]
 {{% note %}}
 6m
 
+* One Service per Container: It's okay running nginx and your PHP application (php-fpm) in the same container, but don't cram MySQL or redis in there.
 * Minimize layers: Clean up temporary things in the same instruction. Docker layers are immutable (like `git`). Deleting files added in one layer in another layer does not reduce the image size.
 * Build Cache: Try to keep the docker instructions sorted in the increasing order of likelyhood of change.
 
@@ -272,14 +294,103 @@ CMD ["yarn", "docker:start"]
 
 ---
 
-## Advantages
+{{< slide timing="120" >}}
 
-* Immutable Code + Environment.
+<div style="font-size: 55px"><b>Okay, it's nice to run a single process inside a container. But, my applications are more complex than that.</b></div>
 
 {{% note %}}
 6m
 
 {{% /note %}}
+
+<!-- .slide: class="code" -->
+
+---
+
+## `docker-compose`
+
+* Nice little utility that lets you declare multiple `docker` commands withink a single `yaml` file.
+* If `docker` -> `service`, then `docker-compose` -> `application`
+
+{{% note %}}
+6m
+
+{{% /note %}}
+
+---
+
+```yaml
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+  mysql:
+    image: "mysql:5.7"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: my-secret-password
+  redis:
+    image: "redis:alpine"
+```
+
+{{% note %}}
+6m
+
+{{% /note %}}
+
+---
+
+## Let's try it!
+
+```bash
+curl -o mysql-compose.yml https://pastebin.com/raw/BKudcBhb
+
+docker-compose -f mysql-compose.yml up
+
+# Observe the logs, let mysql server start and visit port 8080 on your IP address
+
+docker-compose -f mysql-compose.yml down
+```
+
+{{% note %}}
+6m
+
+* What docker-compose does: naming containers, dedicated network
+* Always use volume mounts for database servers
+* Caution when using docker-compose down
+* docker-compose up -d with docker-compose logs
+{{% /note %}}
+
+---
+
+## Advantages
+
+* No more "works on my machine". Because of Immutable Code + Environment, literally the same thing runs in all the environments.
+* `Dockerfile` serves as documentation of your environment.
+* Going back to the older version never breaks. All the dependencies and environment are baked into the image.
+* Spinning up the application locally is very easy.
+* Forces good application design, and makes automation around deployment and scaling easier.
+* Offers isolation from other components from security persepctive.
+* Your applications are not tied to a cloud provider/VPS anymore. You can run it anywhere within minutes.
+
+{{% note %}}
+6m
+
+{{% /note %}}
+
+---
+
+## Let's run a Laravel Application inside Docker
+
+```bash
+git clone https://github.com/deltasquare4/laravel-hello-world
+
+docker-compose up -d
+
+docker stats
+```
 
 ---
 ### Thanks!

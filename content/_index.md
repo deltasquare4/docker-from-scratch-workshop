@@ -10,4 +10,5 @@ alt = "Docker"
 [reveal_hugo]
 custom_theme = "reveal-hugo/themes/sunblind.css"
 margin = 0.2
+default_timing = 120
 +++
