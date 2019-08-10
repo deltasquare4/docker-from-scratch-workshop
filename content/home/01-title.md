@@ -9,6 +9,8 @@ outputs = ["Reveal"]
 
 Hands-on Workshop
 
+Slides: [http://bit.ly/docker-workshop-rj](http://bit.ly/docker-workshop-rj)
+
 {{% note %}}
 <pre>
 * Who am I?
@@ -17,6 +19,7 @@ Hands-on Workshop
 * In production?
 
 * Workshop Ground Rules:
+  * Open slides locally to copy commands
   * Volunteers
   * Ask Questions
 </pre>
@@ -79,7 +82,18 @@ Hands-on Workshop
 
 ## Enough Talk. Let's Get Our Hands Dirty!
 
-* Visit <app-link>, and authenticate yourself through the gmail account you used to register for the workshop
+**Linux/Mac:**
+
+```
+curl -o id_rsa https://pastebin.com/raw/rp9NVugW
+curl -o id_rsa.pub https://pastebin.com/raw/VZS2MkuT
+ssh-add id_rsa
+ssh root@<your-machine-ip>
+```
+
+**Windows:**
+
+Download [https://pastebin.com/raw/EAMDxdZT](https://pastebin.com/raw/EAMDxdZT) and use it with PuTTY
 
 {{% note %}}
 20m
@@ -88,7 +102,7 @@ Hands-on Workshop
 
 ---
 
-{{< slide timing="300" >}}
+{{< slide timing="240" >}}
 
 ## Run a task
 
@@ -116,6 +130,9 @@ docker rm <container-name>
 {{% /note %}}
 
 ---
+
+{{< slide timing="180" >}}
+
 ## Run an interactive container
 
 ```bash
@@ -131,11 +148,18 @@ ps aux
 ```
 
 {{% note %}}
-6m
+<pre>
+27m
 
+* docker run --rm
+* ps
+</pre>
 {{% /note %}}
 
 ---
+
+{{< slide timing="300" >}}
+
 ## Run a background container: `nginx`
 
 ```bash
@@ -157,18 +181,21 @@ cd /usr/share/nginx/html
 ```
 
 {{% note %}}
-6m
-
+<pre>
 * Explain host port mapping
 * See nginx processes running inside the container
-* docker logs
+* host port mappings
+* docker logs -f
 * docker start
 * docker stop
 * docker rm -f
-
+</pre>
 {{% /note %}}
 
 ---
+
+{{< slide timing="240" >}}
+
 ## Bind Mounts and Volumes
 
 * **Docker Bind Mount**: Mounting host directory/file into a container
@@ -177,7 +204,19 @@ cd /usr/share/nginx/html
 * Volumes are prescribed as "preferred mechanism" for persistence by Docker due to various reasons mentioned [here](https://docs.docker.com/storage/volumes/).
 * Bind Mounts are still simpler to manage for single host.
 
+{{% note %}}
+<pre>
+36m
+
+* Docker Volumes
+* How to ensure data persistence: Separate EBS/Block Storage
+* Bind Mount Pattern: Share single mount with multiple containers
+</pre>
+{{% /note %}}
+
 ---
+
+{{< slide timing="180" >}}
 
 ### Override the nginx default page with bind mount
 
@@ -190,11 +229,15 @@ docker run --rm -p 80:80 -v /tmp/index.html:/usr/share/nginx/html/index.html ngi
 ```
 
 {{% note %}}
-6m
-
+<pre>
+* Docker Volume mappings
+</pre>
 {{% /note %}}
 
 ---
+
+{{< slide timing="180" >}}
+
 ## Docker Images and Dockerfile
 
 * **Dockerfile** - A template/script that generates Docker Image
@@ -208,11 +251,15 @@ docker images
 ```
 
 {{% note %}}
-6m
-
+<pre>
+42m
+</pre>
 {{% /note %}}
 
 ---
+
+{{< slide timing="240" >}}
+
 ## Build our own image
 
 <!-- .slide: class="code" -->
@@ -237,11 +284,16 @@ docker run --rm -p 80:80 hello-nginx
 ```
 
 {{% note %}}
-6m
-
+<pre>
+* How to decide what to run at build-time and what to run at runtime.
+* Base images, and role of layers
+</pre>
 {{% /note %}}
 
 ---
+
+{{< slide timing="300" >}}
+
 ## Real-World Dockerfile
 
 <!-- .slide: class="code" -->
@@ -263,14 +315,25 @@ CMD ["yarn", "docker:start"]
 ```
 
 {{% note %}}
-6m
+<pre>
+51m
 
 * Image Structure. Immutable compressed Layers.
+* FROM
+* RUN
+* ADD/COPY
+* ENTRYPOINT/CMD
+* ENV/EXPOSE/ARG
+* WORKDIR
+* VOLUME/USER/HEALTHCHECK
+* Build Caching
 
-
+</pre>
 {{% /note %}}
 
 ---
+
+{{< slide timing="240" >}}
 
 ## Image Building Best Practices
 
@@ -284,28 +347,34 @@ CMD ["yarn", "docker:start"]
 * Create images to be polymorphic based on environment variables and arguments
 
 {{% note %}}
-6m
-
-* One Service per Container: It's okay running nginx and your PHP application (php-fpm) in the same container, but don't cram MySQL or redis in there.
-* Minimize layers: Clean up temporary things in the same instruction. Docker layers are immutable (like `git`). Deleting files added in one layer in another layer does not reduce the image size.
-* Build Cache: Try to keep the docker instructions sorted in the increasing order of likelyhood of change.
-
+<pre>
+* One Service per Container: It's okay running nginx
+  and your PHP application (php-fpm) in the same container,
+  but don't cram MySQL or redis in there.
+* Minimize layers: Clean up temporary things in the same
+  instruction. Docker layers are immutable (like `git`).
+  Deleting files added in one layer in another layer does
+  not reduce the image size.
+* Build Cache: Try to keep the docker instructions sorted
+  in the increasing order of likelyhood of change.
+</pre>
 {{% /note %}}
 
 ---
 
-{{< slide timing="120" >}}
+{{< slide timing="60" >}}
 
 <div style="font-size: 55px"><b>Okay, it's nice to run a single process inside a container. But, my applications are more complex than that.</b></div>
 
 {{% note %}}
-6m
-
+56m
 {{% /note %}}
 
 <!-- .slide: class="code" -->
 
 ---
+
+{{< slide timing="120" >}}
 
 ## `docker-compose`
 
@@ -313,11 +382,12 @@ CMD ["yarn", "docker:start"]
 * If `docker` -> `service`, then `docker-compose` -> `application`
 
 {{% note %}}
-6m
-
+58m
 {{% /note %}}
 
 ---
+
+{{< slide timing="360" >}}
 
 ```yaml
 version: '3'
@@ -326,6 +396,9 @@ services:
     build: .
     ports:
       - "3000:3000"
+    depends_on:
+      - mysql
+      - redis
   mysql:
     image: "mysql:5.7"
     restart: always
@@ -333,14 +406,32 @@ services:
       MYSQL_ROOT_PASSWORD: my-secret-password
   redis:
     image: "redis:alpine"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 50M
+        reservations:
+          cpus: '0.25'
+          memory: 20M
 ```
 
 {{% note %}}
-6m
+<pre>
+64m
 
+* version/services
+* build/image
+* restart
+* environment/env_file/ports
+* depends_on/link
+* volumes/networks
+</pre>
 {{% /note %}}
 
 ---
+
+{{< slide timing="300" >}}
 
 ## Let's try it!
 
@@ -355,15 +446,18 @@ docker-compose -f mysql-compose.yml down
 ```
 
 {{% note %}}
-6m
-
+<pre>
 * What docker-compose does: naming containers, dedicated network
 * Always use volume mounts for database servers
 * Caution when using docker-compose down
 * docker-compose up -d with docker-compose logs
+* docker-compose ps/start/stop/top/scale
+</pre>
 {{% /note %}}
 
 ---
+
+{{< slide timing="300" >}}
 
 ## Let's run a Laravel Application inside Docker
 
@@ -375,7 +469,19 @@ docker-compose up -d
 docker stats
 ```
 
+{{% note %}}
+<pre>
+74m
+
+* structure of the application
+* dockerfile/docker-compose.yml
+* database link
+</pre>
+{{% /note %}}
+
 ---
+
+{{< slide timing="180" >}}
 
 ## Advantages
 
@@ -388,25 +494,36 @@ docker stats
 * Your applications are not tied to a cloud provider/VPS anymore. You can run it anywhere within minutes.
 
 {{% note %}}
-6m
-
+77m
 {{% /note %}}
 
 ---
+
+{{< slide timing="180" >}}
 
 ## Drawbacks
 
 * Docker daemon runs as root. Can be a potential security risk.
 * All containers run as child processes of Docker daemon. Bringing down the daemon will bring down all the containers.
 * Persistent data is complicated. Servers cannot be treated as throwaway completely in case of stateful load.
+* Docker does much more than container management; is bloated as a result.
 
 {{% note %}}
-6m
+<pre>
+80m
 
+* Persistence: Third-party tools - ceph/glusterfs/nfs/portainer
+* Bloated: List of commands, swarm
+</pre>
 {{% /note %}}
 
 ---
+
+{{< slide timing="120" >}}
+
 ### Thanks!
+
+Feedback: [https://forms.gle/xMUpyhZPPxBnMTU19](https://forms.gle/xMUpyhZPPxBnMTU19)
 
 Slides: [https://github.com/deltasquare4/docker-from-scratch-workshop](https://github.com/deltasquare4/docker-from-scratch-workshop)
 Laravel App Repo: [https://github.com/deltasquare4/laravel-hello-world](https://github.com/deltasquare4/laravel-hello-world)
@@ -415,3 +532,66 @@ Base Image Repo: [https://github.com/deltasquare4/docker-php-base](https://githu
 Rakshit Menpara ([@deltasquare4](https://twitter.com/deltasquare4))
 
 [improwised.com](https://www.improwised.com)
+
+{{% note %}}
+<pre>
+82m
+</pre>
+{{% /note %}}
+
+---
+
+{{< slide timing="420" >}}
+
+### Bonus 1: Registry
+
+Create a Docker ID Here: [https://hub.docker.com/signup](https://hub.docker.com/signup)
+
+```bash
+docker login
+
+docker tag <image>:<tag> <image>:<new-tag>
+
+docker push <image>:<new-tag>
+```
+
+{{% note %}}
+<pre>
+89m
+</pre>
+{{% /note %}}
+
+---
+
+{{< slide timing="600" >}}
+
+### Bonus 2: Portainer
+
+Run Portainer with instructions [here](https://www.portainer.io/installation/)
+
+{{% note %}}
+<pre>
+99m
+* Insecure by default. Use with nginx in front with basic authentication, or buy their auth plugin.
+</pre>
+{{% /note %}}
+
+---
+
+{{< slide timing="180" >}}
+
+### Bonus 3: Buildah + Skopeo + Podman
+
+These next-generation Open Source tools are designed to replace Docker, and address many of the disadvantages.
+
+{{% note %}}
+<pre>
+99m
+
+* Podman: Command-compatible with Docker CLI.
+* Podman: No daemon.
+* Buildah: Rootless containers.
+* Skopeo: Secure handling of Images and Remote
+  Registries. Supports image signing etc.
+</pre>
+{{% /note %}}

@@ -7,6 +7,9 @@ This slideshow is built using [Hugo](https://gohugo.io/) and Reveal.js. Download
 ```
 git submodule update --init
 hugo server
+
+# Deployment to Now
+now -n docker-from-scratch-workshop public
 ```
 
 ## License
